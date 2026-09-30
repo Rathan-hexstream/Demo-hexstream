@@ -23,7 +23,7 @@ export default function Hero({ heroData }: any) {
             swiper.navigation.update();
           }}
           spaceBetween={0}
-          centeredSlides={true}
+          slidesPerView={1}
           autoplay={{
             delay: 6000,
             disableOnInteraction: false,
@@ -44,30 +44,41 @@ export default function Hero({ heroData }: any) {
                 key={desk.title}
                 className="flex justify-center h-full "
               >
-                <div className="h-[50vh]">
+                {/* Height is clamped so the banner never gets too short on laptops or too tall on large screens */}
+                <div className="relative w-full h-[clamp(440px,58vh,640px)]">
                   <Image
                     src={desk?.banner?.url}
-                    className="h-full bg-center object-cover  brightness-[0.8] grayscale-[0.1]"
-                    objectFit="cover"
-                    layout="fill"
+                    className="object-cover object-center brightness-[0.8] grayscale-[0.1]"
+                    fill
+                    sizes="100vw"
                     alt={desk.alt}
                     priority
                   />
-                  <h2 className="absolute md:top-[20%] xl:top-[30%] left-[5%] z-50 text-white text-4xl lg:text-5xl max-w-xl lg:max-w-2xl">
-                    {desk.title}
-                  </h2>
-                  {desk?.heroLink && (
-                    <div className="absolute bottom-20 left-[5%] z-50 text-white text-lg border-2 px-3 py-1.5 ">
-                      <button>
-                        <Link href={desk?.heroLink ?? "/"}>Learn More</Link>
-                      </button>
+                  {/* Left-side gradient keeps the headline readable over busy photos */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/25 to-transparent" />
+                  {/* Title and CTA share one vertically-centred block so they can never overlap */}
+                  <div className="absolute inset-0 z-10 flex items-center">
+                    <div className="max-w-7xl w-full mx-auto px-8">
+                      {desk?.title && (
+                        <h2 className="text-white text-4xl xl:text-5xl 2xl:text-6xl font-bold leading-tight max-w-2xl 2xl:max-w-3xl drop-shadow-lg">
+                          {desk.title}
+                        </h2>
+                      )}
+                      {desk?.heroLink && (
+                        <Link
+                          href={desk.heroLink}
+                          className="inline-block mt-8 text-white text-lg border-2 border-white px-5 py-2 transition-colors duration-300 hover:bg-white hover:text-primary"
+                        >
+                          Learn More
+                        </Link>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               </SwiperSlide>
             );
           })}
-          <div className="flex absolute bottom-16 right-16 z-40">
+          <div className="flex absolute bottom-12 right-16 z-40">
             <button ref={prevRef} className="mx-8 hover:cursor-pointer">
               <span className="sr-only">Previous Slide</span>
               <svg
