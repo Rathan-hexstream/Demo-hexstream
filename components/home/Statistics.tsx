@@ -55,12 +55,20 @@ const Statistics = () => {
             responsive={responsiveSettings}
             pauseOnHover={true}
         >
+          {/* Priority order: Georgia Power, Con Edison, Dominion Energy, MidAmerican Energy — everything after is unordered */}
+          <div><img src={'https://media.graphassets.com/aBiN5NtmQbW3juNV33gw'} alt="Georgia Power"
+                    style={{height: 40, marginTop: 20, paddingRight: 20}}/></div>
+          <div><img src={'https://media.graphassets.com/2ZSPztxvQvCtj8BQ7mJt'} alt="Con Edison"
+                    style={{height: 30, marginTop: 20, paddingRight: 30,}}/></div>
+          <div><img src={'https://media.graphassets.com/r7IJJu8jSE2Haf3ahxa6'} alt="Dominion Energy"
+                    style={{height: 40, marginTop: 20, paddingRight: 30,}}/></div>
+          <div><img src={'/clients/MidAmerican_Energy_Company-logo_subhead.svg'} alt="MidAmerican Energy Company"
+                    style={{height: 50, marginTop: 13, paddingRight: 30,}}/></div>
 
-
-          <div><img src={'https://media.graphassets.com/UYDeVqMiROOCmHpGPmrg'} style={{height: 80}}/></div>
-          <div><img src={'https://media.graphassets.com/AzQ3AMFRhubZdDy5CClG'} style={{height: 80}}/></div>
-          <div><img src={'https://media.graphassets.com/9cpi5VL4TKaNFg29w5R2'} style={{height: 80}}/></div>
-          <div><img src={'https://media.graphassets.com/VpiWMzIBTe2aQR1KZVqG'} style={{height: 40, marginTop: 20}}/>
+          <div><img src={'https://media.graphassets.com/UYDeVqMiROOCmHpGPmrg'} alt="NiSource" style={{height: 80}}/></div>
+          <div><img src={'https://media.graphassets.com/AzQ3AMFRhubZdDy5CClG'} alt="Toronto Hydro" style={{height: 80}}/></div>
+          <div><img src={'https://media.graphassets.com/9cpi5VL4TKaNFg29w5R2'} alt="Clark County Water Reclamation District" style={{height: 80}}/></div>
+          <div><img src={'https://media.graphassets.com/VpiWMzIBTe2aQR1KZVqG'} alt="SDG&E" style={{height: 40, marginTop: 20}}/>
           </div>
 
             <div>
@@ -72,27 +80,21 @@ const Statistics = () => {
             </div>
 
 
-          <div><img src={'https://media.graphassets.com/EBQmnXSR1O5oH4m3iom8'} style={{height: 40, marginTop: 20,}}/>
+          <div><img src={'https://media.graphassets.com/EBQmnXSR1O5oH4m3iom8'} alt="Eversource" style={{height: 40, marginTop: 20,}}/>
           </div>
-          <div><img src={'https://media.graphassets.com/aBiN5NtmQbW3juNV33gw'}
-                    style={{height: 40, marginTop: 20, paddingRight: 20}}/></div>
-          <div><img src={'https://media.graphassets.com/2ZSPztxvQvCtj8BQ7mJt'}
-                    style={{height: 30, marginTop: 20, paddingRight: 30,}}/></div>
-          <div><img src={'https://media.graphassets.com/r7IJJu8jSE2Haf3ahxa6'}
+          <div><img src={'https://media.graphassets.com/nHSW11XWTLSdlWQc2t6q'} alt="Seattle City Light"
                     style={{height: 40, marginTop: 20, paddingRight: 30,}}/></div>
-          <div><img src={'https://media.graphassets.com/nHSW11XWTLSdlWQc2t6q'}
-                    style={{height: 40, marginTop: 20, paddingRight: 30,}}/></div>
-          <div><img src={'https://media.graphassets.com/YvnHNsrOS7m5KYYKiwyx'} style={{height: 60, paddingRight: 10, marginTop: 5}}/>
+          <div><img src={'https://media.graphassets.com/YvnHNsrOS7m5KYYKiwyx'} alt="ATCO" style={{height: 60, paddingRight: 10, marginTop: 5}}/>
           </div>
-          <div><img src={'https://media.graphassets.com/8Il4AfNS7i9bWNJj6ugV'}
+          <div><img src={'https://media.graphassets.com/8Il4AfNS7i9bWNJj6ugV'} alt="Modesto Irrigation District"
                     style={{height: 50, paddingRight: 30, marginTop: 10}}/></div>
-          <div><img src={'https://media.graphassets.com/cLgr9snSHaqxsv21nAQ3'}
+          <div><img src={'https://media.graphassets.com/cLgr9snSHaqxsv21nAQ3'} alt="Knoxville Utilities Board"
                     style={{height: 50, marginTop: 13, paddingRight: 40,}}/></div>
-          <div><img src={'https://media.graphassets.com/4DpchlRBShC6NRO5XZIr'}
+          <div><img src={'https://media.graphassets.com/4DpchlRBShC6NRO5XZIr'} alt="Seminole Electric Cooperative"
                     style={{height: 50, marginTop: 13, marginLeft: -20}}/></div>
-          <div><img src={'https://media.graphassets.com/lep8nFCqT5mNEUxmvxua'} style={{height: 80}}/></div>
-         {/* <div><img src={'https://media.graphassets.com/NMFTmyHQDAvicaEaywAy'} style={{height: 60}}/></div>*/}
-          <div><img src={'https://media.graphassets.com/TlT9G8WnToOOJcrJMTBO'}
+          <div><img src={'https://media.graphassets.com/lep8nFCqT5mNEUxmvxua'} alt="Austin Energy" style={{height: 80}}/></div>
+         {/* <div><img src={'https://media.graphassets.com/NMFTmyHQDAvicaEaywAy'} alt="Miami-Dade County" style={{height: 60}}/></div>*/}
+          <div><img src={'https://media.graphassets.com/TlT9G8WnToOOJcrJMTBO'} alt="Duke Energy"
                     style={{height: 50, paddingRight: 40, marginTop: 13,}}/></div>
 
 
