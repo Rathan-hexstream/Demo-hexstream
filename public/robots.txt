@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://hexstream.com/
+
+# Sitemaps
+Sitemap: https://hexstream.com/sitemap.xml
