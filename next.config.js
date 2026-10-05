@@ -1,6 +1,4 @@
 /*@type {import('next').NextConfig} */
-console.log("Next config loaded");
-
 const nextConfig = {
   experimental: {
     cpus: 1,
@@ -9,7 +7,10 @@ const nextConfig = {
   reactStrictMode: true,
   images: {
     unoptimized: true,
-    domains: ["us-east-1-shared-usea1-02.graphassets.com"],
+    remotePatterns: [
+      { protocol: "https", hostname: "us-east-1-shared-usea1-02.graphassets.com" },
+      { protocol: "https", hostname: "media.graphassets.com" },
+    ],
   },
 };
 

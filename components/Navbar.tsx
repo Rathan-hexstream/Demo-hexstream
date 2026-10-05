@@ -1,498 +1,460 @@
-import { useState, useEffect } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import Router from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 
 import logo from "../public/assets/bigHeaderLogo.png";
-import logo2 from "../public/assets/mbe_ori.png";
-import Hamburger from "hamburger-react";
-import NavItem from "./NavItem";
-import Accordion from "./reusable/AccordionItem";
+import ButtonLink, { ArrowIcon } from "./ui/Button";
+import HexPattern from "./ui/HexPattern";
+import { EASE } from "./ui/motion";
+import { CONTACT_URL, mainNav, type NavGroup } from "@/utils/navigation";
 
-const insights = [
-  { name: "UAUG", href: "#" },
-  { name: "Success Stories", href: "#" },
-  { name: "HEXStream Blog", href: "#" },
-  { name: "Tech Corner", href: "/tech-corner" },
-  { name: "White Papers / Special Reports / Collateral", href: "/whitepapers" },
-];
+// Regular hexagon in a 100x100 box, matching the logo mark.
+const HEX_PATH = "M50 3 91 26.5v47L50 97 9 73.5v-47Z";
 
-const services = [
-  {
-    name: "Utility360",
-    href: "/products/utility360", // ✅ Proper link that will navigate
-    hasSubmenu: true,                 // ✅ Flag to help in UI logic
-    submenu: [
-      // { name: "Storm Analytics", href: "/products/storm-analytics" },
-      // { name: "Reliability Analytics", href: "/products/reliability-analytics" },
-      // { name: "AMI Analytics", href: "/products/ami-analytics" },
-      // { name: "Field Services Analytics", href: "/capabilities/field-services-analytics" },
-    ],
-  },
-  { name: "HEXaid", href: "/products/hexaid" },
-  { name: "SPARC", href: "/products/sparc" },
-  { name: "HEXpert", href: "/products/hexpert" },
-  { name: "AuditAI", href: "/products/auditai" },
+const Chevron = ({ open }: { open: boolean }) => (
+  <svg
+    aria-hidden
+    viewBox="0 0 20 20"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={`h-3.5 w-3.5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+  >
+    <path d="m5 7.5 5 5 5-5" />
+  </svg>
+);
 
-];
+/** Contents of the mega panel for one navigation group. */
+const MegaContent = ({ group }: { group: NavGroup }) => (
+  <motion.div
+    key={group.label}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -6, transition: { duration: 0.12 } }}
+    transition={{ duration: 0.3, ease: EASE }}
+    className="grid grid-cols-12 gap-3"
+  >
+    <div className="bg-deep relative isolate col-span-4 flex flex-col overflow-hidden rounded-2xl p-7 text-white">
+      <HexPattern className="-z-10 text-white/[0.08] [mask-image:linear-gradient(to_top,black,transparent_80%)]" />
+      <div className="absolute -right-12 -top-16 -z-10 h-44 w-44 rounded-full bg-brand/50 blur-[70px]" />
+      <motion.svg
+        aria-hidden
+        viewBox="0 0 100 100"
+        className="absolute -bottom-16 -right-16 -z-10 h-64 w-64 text-white/15"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+      >
+        <path
+          d={HEX_PATH}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+        />
+        <path
+          d={HEX_PATH}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          transform="translate(18 18) scale(0.64)"
+        />
+      </motion.svg>
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
+        {group.label}
+      </p>
+      <p className="mt-3 font-display text-2xl font-bold leading-snug">
+        {group.tagline}
+      </p>
+      <ButtonLink
+        href={CONTACT_URL}
+        variant="light"
+        className="mt-auto w-fit !px-5 !py-2.5"
+      >
+        Talk to our team
+      </ButtonLink>
+    </div>
 
-const oracle = [
-  { name: "OUDI", href: "/capabilities/oudi" },
-  {
-    name: "Data Exchange",
-    href: "/capabilities/data-exchange",
-    submenu: [
-      { name: "Golden Gate", href: "/capabilities/goldengate" },
-      { name: "LEC", href: "/capabilities/lec" },
-      { name: "OIC", href: "/capabilities/oic" },
-      { name: "SOA", href: "/capabilities/soa" },
-    ],
-  },
-  { name: "FDI", href: "/capabilities/fdi" },
-  { name: "OCI", href: "/capabilities/oci" },
-  { name: "OUA", href: "/capabilities/oua" },
-];
+    <div className="relative isolate col-span-8 overflow-hidden rounded-2xl bg-gradient-to-br from-white via-white to-brand-50 p-2">
+      <HexPattern
+        scale={1.1}
+        className="-z-10 text-brand/[0.14] [mask-image:radial-gradient(ellipse_75%_90%_at_100%_100%,black,transparent)]"
+      />
+      <HexPattern
+        scale={1.1}
+        className="-z-10 text-ink/[0.07] [mask-image:radial-gradient(ellipse_50%_70%_at_0%_0%,black,transparent)]"
+      />
+      <motion.span
+        aria-hidden
+        className="hexagon absolute -bottom-14 -right-10 -z-10 !h-48 !w-48 bg-gradient-to-br from-brand/25 to-brand-400/5"
+        animate={{ y: [0, -10, 0], rotate: [0, 6, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.ul
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: 0.035, delayChildren: 0.05 } },
+        }}
+        className="grid auto-rows-min grid-cols-2 gap-1"
+      >
+        {group.links.map((link) => (
+          <motion.li
+            key={link.name}
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 0.35, ease: EASE },
+              },
+            }}
+          >
+            <Link
+              href={link.href}
+              className="group/link flex items-start gap-3.5 rounded-xl p-3.5 transition-colors duration-300 hover:bg-white hover:shadow-card"
+            >
+              <span className="hexagon grid !h-11 !w-11 shrink-0 place-items-center bg-gradient-to-br from-brand to-brand-600 font-display text-sm font-bold text-white transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/link:rotate-[60deg] group-hover/link:scale-110">
+                <span className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/link:-rotate-[60deg]">
+                  {link.name.charAt(0)}
+                </span>
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex items-center gap-1.5 text-[15px] font-semibold text-ink">
+                  {link.name}
+                  <ArrowIcon className="-translate-x-2 text-brand opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:opacity-100" />
+                </span>
+                {link.description && (
+                  <span className="mt-0.5 block text-[13px] leading-snug text-ink/60">
+                    {link.description}
+                  </span>
+                )}
+              </span>
+            </Link>
+            {link.children && (
+              <div className="flex flex-wrap gap-1.5 pb-2 pl-[4.5rem] pr-3">
+                {link.children.map((child) => (
+                  <Link
+                    key={child.name}
+                    href={child.href}
+                    className="rounded-full border border-ink/15 px-2.5 py-1 text-xs font-medium text-ink/70 transition-all duration-300 hover:-translate-y-0.5 hover:border-brand hover:bg-brand hover:text-white"
+                  >
+                    {child.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </motion.li>
+        ))}
+      </motion.ul>
+    </div>
+  </motion.div>
+);
 
+const MobileGroup = ({ group }: { group: NavGroup }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border-b border-ink/10">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className={`flex w-full items-center justify-between py-4 text-left font-display text-lg font-semibold transition-colors ${
+          open ? "text-brand" : "text-ink"
+        }`}
+      >
+        {group.label}
+        <Chevron open={open} />
+      </button>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.ul
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+            className="overflow-hidden"
+          >
+            {group.links.map((link) => (
+              <li key={link.name} className="pb-3">
+                <Link
+                  href={link.href}
+                  className="block py-1 text-[15px] font-medium text-ink/75"
+                >
+                  {link.name}
+                </Link>
+                {link.children && (
+                  <div className="flex flex-wrap gap-2 pt-1.5">
+                    {link.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        href={child.href}
+                        className="rounded-full border border-ink/15 px-3 py-1 text-xs text-ink/70"
+                      >
+                        {child.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
-const ms = [
-  { name: "DevOps", href: "/capabilities/devops" },
-  { name: "Operations Support", href: "/capabilities/operations-support" },
-];
-
-const accelertors = [
-  {
-    name: "AI Applications",
-    href: "/capabilities/ai-applications",
-  },
-  {
-    name: "Utility360",
-    href: "/capabilities/utility360",
-  },
-  {
-    name: "Outage Management Analytics",
-    href: "/capabilities/outage-management-analytics",
-  },
-  {
-    name: "Asset Management Analytics",
-    href: "/capabilities/asset-management-analytics",
-  },
-  {
-    name: "Preventative Asset Maintenance",
-    href: "/capabilities/preventative-asset-maintenance",
-  },
-  {
-    name: "Field Services Analytics",
-    href: "/capabilities/field-services-analytics",
-  },
-];
-const technologies = [{ name: "Oracle Utility Analytics (OUA)", href: "/" }];
-
-const navigation = [
-  // { name: "Solutions", href: "/solutions" },
-  //{ name: "Utilities Analytics User Group", href: "/uaug" },
-  // { name: "Careers", href: "/careers" },
-  { name: "About Us", href: "/about" },
-  { name: "Contact Us", href: "https://forms.office.com/r/zg0U7ZmsdF" },
-];
 export default function Navbar() {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-
   const [scrolled, setScrolled] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
+
+  // Close every menu on navigation.
+  useEffect(() => {
+    const close = () => {
+      setOpenMenu(null);
+      setMobileOpen(false);
+    };
+    router.events.on("routeChangeStart", close);
+    return () => router.events.off("routeChangeStart", close);
+  }, [router.events]);
 
   useEffect(() => {
-    const scrollHandler = () => {
-      if (window.scrollY > 80) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpenMenu(null);
+        setMobileOpen(false);
       }
     };
-    window.addEventListener("scroll", scrollHandler);
-    return () => {
-      window.removeEventListener("scroll", scrollHandler);
-    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   useEffect(() => {
-    const doMagic = () => {
-      setIsOpen(false);
-    };
-
-    Router.events.on("routeChangeStart", doMagic); // add listener
-
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
-      Router.events.off("routeChangeStart", doMagic); // remove listener
+      document.body.style.overflow = "";
     };
-  }, []);
+  }, [mobileOpen]);
+
+  const cancelClose = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  };
+  const enter = (label: string, group: boolean) => {
+    cancelClose();
+    setHovered(label);
+    setOpenMenu(group ? label : null);
+  };
+  const leaveSoon = () => {
+    cancelClose();
+    closeTimer.current = setTimeout(() => {
+      setOpenMenu(null);
+      setHovered(null);
+    }, 160);
+  };
+
+  const isActive = (href: string) => router.asPath.split("?")[0] === href;
+  const openGroup = mainNav.find(
+    (entry) => entry.kind === "group" && entry.group.label === openMenu,
+  );
+  const itemClass =
+    "relative flex items-center gap-1.5 rounded-full px-4 py-2 text-[15px] font-medium text-ink transition-colors";
+  const pill = (
+    <motion.span
+      layoutId="nav-pill"
+      className="absolute inset-0 rounded-full bg-ink/[0.07]"
+      transition={{ type: "spring", stiffness: 420, damping: 34 }}
+    />
+  );
 
   return (
-    <header className={`fixed w-full z-50 top-0 left-0 bg-prime  shadow-2xl`}>
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 md:px-2 " aria-label="Top">
-        <div className="w-full sm:-mb-0 flex items-center justify-between sm:px-6 lg:px-0">
-          <div className="flex items-center justify-between w-full">
-            <div className="mr-auto md:mx-0 ">
-              <Link href="/">
-                <div className="cursor-pointer">
-                  <span className="sr-only">HEXstream-</span>
-                  <div className="py-4 flex justify-between">
-                    <Image
-                      priority
-                      height={100}
-                      width={150}
-                      alt="HEXStream logo"
-                      src={logo}
-                      className="hover:scale-110 duration-300 transition-transform"
-                    />
-                  </div>
-                </div>
-              </Link>
-            </div>
-            {/* MD+ */}
-            <div className="hidden gap-4 items-center relative lg:flex">
-              <>
-                {/* Products */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <span className="mr-1 text-primary">Products</span>
-                    <svg className="fill-primary h-4 w-4 transform group-hover:rotate-180 transition duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </button>
-                  <ul className="dropdown-menu absolute hidden group-hover:block bg-white text-primary pt-1 w-52 rounded-lg shadow-lg z-50 transition duration-300 ease-in-out">
-                    {services.map(({ name, href, submenu }) => (
-                        <li key={name} className="relative group/submenu">
-                          {submenu ? (
-                              <>
-                                <Link
-                                    href={href}
-                                    className="py-2 px-4 flex justify-between items-center hover:bg-primary hover:text-white transition rounded-md"
-                                >
-                                  {name}
-                                  <svg
-                                      className="w-3 h-3 ml-1 fill-current"
-                                      viewBox="0 0 20 20"
-                                  >
-                                    {/*<path d="M6 4l8 6-8 6V4z" />*/}
-                                  </svg>
-                                </Link>
-                                <ul className="absolute top-0 left-full hidden group-hover/submenu:block bg-white text-primary w-52 rounded-lg shadow-lg transition duration-300 ease-in-out z-50">
-                                  {submenu.map(({ name: subName, href: subHref }) => (
-                                      <li key={subName}>
-                                        <Link
-                                            href={subHref}
-                                            className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md"
-                                        >
-                                          {subName}
-                                        </Link>
-                                      </li>
-                                  ))}
-                                </ul>
-                              </>
-                          ) : (
-                              <Link
-                                  href={href}
-                                  className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md"
-                              >
-                                {name}
-                              </Link>
-                          )}
-                        </li>
-                    ))}
-                  </ul>
-                </div>
+    <>
+      {/* Dims the page behind an open menu */}
+      <AnimatePresence>
+        {(openGroup || mobileOpen) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-40 bg-ink/25 backdrop-blur-[2px]"
+          />
+        )}
+      </AnimatePresence>
 
-                {/* Oracle with submenu */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <span className="mr-1 text-primary">Oracle</span>
-                    <svg className="fill-primary h-4 w-4 transform group-hover:rotate-180 transition duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </button>
-                  <ul className="dropdown-menu absolute hidden group-hover:block bg-white text-primary pt-1 w-52 rounded-lg shadow-lg z-50 transition duration-300 ease-in-out">
-                      {oracle.map(({ name, href, submenu }) => (
-                          <li key={name} className="relative group/submenu">
-                              {submenu ? (
-                                  <>
-                                      <Link
-                                          href={href}
-                                          className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md flex justify-between items-center cursor-pointer"
-                                      >
-                                          {name}
-                                          <svg className="w-3 h-3 ml-1 fill-current" viewBox="0 0 20 20">
-                                              <path d="M6 4l8 6-8 6V4z" />
-                                          </svg>
-                                      </Link>
-                                      <ul className="absolute top-0 left-full hidden group-hover/submenu:block bg-white text-primary w-52 rounded-lg shadow-lg transition duration-300 ease-in-out z-50">
-                                          {submenu.map(({ name: subName, href: subHref }) => (
-                                              <li key={subName}>
-                                                  <Link
-                                                      href={subHref}
-                                                      className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md"
-                                                  >
-                                                      {subName}
-                                                  </Link>
-                                              </li>
-                                          ))}
-                                      </ul>
-                                  </>
-                              ) : (
-                                  <Link
-                                      href={href}
-                                      className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md"
-                                  >
-                                      {name}
-                                  </Link>
-                              )}
-                          </li>
-                      ))}
-                  </ul>
-                </div>
-                {/* Technologies */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <Link href="/capabilities/Expertise" className="mr-1 text-primary">Expertise</Link>
-                  </button>
-                </div>
-
-                {/* Managed Services */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <span className="mr-1 text-primary">Managed Services</span>
-                    <svg className="fill-primary h-4 w-4 transform group-hover:rotate-180 transition duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </button>
-                  <ul className="dropdown-menu absolute hidden group-hover:block bg-white text-primary pt-1 w-52 rounded-lg shadow-lg z-50 transition duration-300 ease-in-out">
-                    {ms.map(({ name, href }) => (
-                        <li key={name}>
-                          <Link className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md" href={href}>
-                            {name}
-                          </Link>
-                        </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Insights */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <Link href="/Insights" className="mr-1 text-primary">Insights</Link>
-                  </button>
-
-                  {/*<button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">*/}
-                  {/*  <span className="mr-1 text-primary">Insights</span>*/}
-                  {/*  <svg className="fill-primary h-4 w-4 transform group-hover:rotate-180 transition duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">*/}
-                  {/*    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />*/}
-                  {/*  </svg>*/}
-                  {/*</button>*/}
-                  {/*<ul className="dropdown-menu absolute hidden group-hover:block bg-white text-primary pt-1 w-52 rounded-lg shadow-lg z-50 transition duration-300 ease-in-out">*/}
-                  {/*  {insights.map(({ name, href }) => (*/}
-                  {/*      <li key={name}>*/}
-                  {/*        <Link className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md" href={href}>*/}
-                  {/*          {name}*/}
-                  {/*        </Link>*/}
-                  {/*      </li>*/}
-                  {/*  ))}*/}
-                  {/*</ul>*/}
-                </div>
-
-                {/* About */}
-                <div className="dropdown inline-block relative group">
-                  <button className="text-gray-700 font-semibold py-2 inline-flex items-center transition duration-200 group-hover:text-primary-dark">
-                    <span className="mr-1 text-primary">About</span>
-                    <svg className="fill-primary h-4 w-4 transform group-hover:rotate-180 transition duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                    </svg>
-                  </button>
-                  <ul className="dropdown-menu absolute hidden group-hover:block bg-white text-primary pt-1 w-52 rounded-lg shadow-lg z-50 transition duration-300 ease-in-out">
-                    <li>
-                      <Link className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md" href="/about">
-                        About
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md" href="/careers">
-                        Careers
-                      </Link>
-                    </li>
-                      <li>
-                          <Link className="py-2 px-4 block hover:bg-primary hover:text-white transition rounded-md" href="/uaug">
-                              Utilities Analytics User Group
-                          </Link>
-                      </li>
-                  </ul>
-                </div>
-              </>
-
-              {/* Contact */}
-              <div>
-                <Link href="https://forms.office.com/r/zg0U7ZmsdF" target="_blank">
-                  <span className="text-primary text-base cursor-pointer font-bold duration-300 transition-colors hover:text-primeYellow contact-cta">Contact Us</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="lg:hidden block">
-            <Hamburger toggled={isOpen} toggle={setIsOpen} size={30} rounded />
-          </div>
-        </div>
-          <ul
-              id="mobile_nav"
-              className={`transition-all duration-300 absolute  bg-primary text-white flex  ${
-                  isOpen
-                      ? "visible opacity-1 translate-y-0"
-                      : "invisible opacity-0 translate-y-10"
-              } flex-col ${
-                  scrolled ? "top-24" : "top-20"
-              } md:top-24 w-full lg:hidden shadow-md left-0 py-3 `}
+      <header className="fixed inset-x-0 top-0 z-50 pt-3">
+        <div className="container-x" onMouseLeave={leaveSoon}>
+          <nav
+            aria-label="Top"
+            className={`relative flex h-16 items-center justify-between gap-6 rounded-2xl bg-white/90 pl-5 pr-3 ring-1 backdrop-blur-xl transition-shadow duration-300 ${
+              scrolled || openGroup || mobileOpen
+                ? "shadow-lift ring-ink/10"
+                : "shadow-card ring-ink/[0.06]"
+            }`}
           >
-              <div className="w-11/12 mx-auto">
+            <Link
+              href="/"
+              className="shrink-0 transition-transform duration-300 hover:scale-105"
+              aria-label="HEXstream home"
+            >
+              <Image
+                priority
+                src={logo}
+                alt="HEXstream"
+                width={120}
+                height={50}
+                className="h-auto w-[110px] sm:w-[120px]"
+              />
+            </Link>
 
-                  {/* ------------------- PRODUCTS ------------------- */}
-                  <details className="w-full cursor-pointer pt-2">
-                      <summary className="w-full flex justify-between pb-1 border-b mb-1">
-                          <p className="pl-4">Products</p>
-                      </summary>
-                      <div className="pl-4">
+            {/* Desktop */}
+            <div className="hidden items-center lg:flex">
+              {mainNav.map((entry) => {
+                if (entry.kind === "link") {
+                  return (
+                    <Link
+                      key={entry.label}
+                      href={entry.href}
+                      onMouseEnter={() => enter(entry.label, false)}
+                      className={`${itemClass} ${isActive(entry.href) ? "!text-brand" : ""}`}
+                    >
+                      {hovered === entry.label && pill}
+                      <span className="relative">{entry.label}</span>
+                    </Link>
+                  );
+                }
+                const { label } = entry.group;
+                const open = openMenu === label;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    aria-expanded={open}
+                    aria-haspopup="true"
+                    onMouseEnter={() => enter(label, true)}
+                    onClick={() =>
+                      open ? setOpenMenu(null) : enter(label, true)
+                    }
+                    className={`${itemClass} ${open ? "!text-brand" : ""}`}
+                  >
+                    {hovered === label && pill}
+                    <span className="relative">{label}</span>
+                    <span className="relative">
+                      <Chevron open={open} />
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
-                          {/* Utility360 — WITH SUBMENU */}
-                          <details>
-                              <summary className="py-2 border-b flex items-center gap-3 cursor-pointer">
-                                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20">
-                                  </svg>
-                                  <Link
-                                      href="/capabilities/utility360"
-                                      onClick={() => setIsOpen(false)}
-                                      className="font-semibold flex-1"
-                                  >
-                                      Utility360
-                                  </Link>
-                              </summary>
-                              <div className="pl-4 flex flex-col">
-                                  <NavItem title="Storm Analytics" link="/capabilities/storm-analytics" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/storm-analytics"} />
-                                  <NavItem title="Reliability Analytics" link="/capabilities/reliability-analytics" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/reliability-analytics"} />
-                                  <NavItem title="AMI Analytics" link="/capabilities/ami-analytics" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/ami-analytics"} />
-                              </div>
-                          </details>
+            <div
+              className="hidden lg:block"
+              onMouseEnter={() => enter("", false)}
+            >
+              <ButtonLink href={CONTACT_URL} className="!px-5 !py-2.5">
+                Contact Us
+              </ButtonLink>
+            </div>
 
-                          <NavItem title="SPARC" link="/capabilities/sparc" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/sparc"} />
-                          <NavItem title="HEXpert" link="/capabilities/hexpert" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/hexpert"} />
-                          <NavItem title="AuditAI" link="/capabilities/auditai" onClick={() => setIsOpen(false)} active={router.pathname === "/capabilities/auditai"} />
+            {/* Mobile toggle */}
+            <button
+              type="button"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen((o) => !o)}
+              className="relative h-11 w-11 rounded-full text-ink transition-colors hover:bg-ink/5 lg:hidden"
+            >
+              <motion.span
+                className="absolute left-3 right-3 top-1/2 h-0.5 rounded bg-current"
+                animate={
+                  mobileOpen ? { rotate: 45, y: 0 } : { rotate: 0, y: -5 }
+                }
+                transition={{ duration: 0.3, ease: EASE }}
+              />
+              <motion.span
+                className="absolute left-3 right-3 top-1/2 h-0.5 rounded bg-current"
+                animate={
+                  mobileOpen ? { rotate: -45, y: 0 } : { rotate: 0, y: 5 }
+                }
+                transition={{ duration: 0.3, ease: EASE }}
+              />
+            </button>
+          </nav>
 
-                      </div>
-                  </details>
+          {/* Desktop mega panel: one shared surface whose contents swap per group */}
+          <AnimatePresence>
+            {openGroup && openGroup.kind === "group" && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.985 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.985 }}
+                transition={{ duration: 0.28, ease: EASE }}
+                onMouseEnter={cancelClose}
+                className="hidden origin-top pt-2 lg:block"
+              >
+                <div className="rounded-3xl bg-white p-3 shadow-lift ring-1 ring-ink/10">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <MegaContent
+                      key={openGroup.group.label}
+                      group={openGroup.group}
+                    />
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-                  {/* ------------------- ORACLE ------------------- */}
-                  <details className="w-full cursor-pointer pt-2">
-                      <summary className="w-full flex justify-between pb-1 border-b mb-1">
-                          <p className="pl-4">Oracle</p>
-                      </summary>
-                      <div className="pl-4">
-                          {oracle.map((item, i) =>
-                              item.submenu ? (
-                                  <details key={i}>
-                                      <summary className="py-2 border-b flex items-center gap-3 cursor-pointer">
-                                          <Link
-                                              href="/capabilities/data-exchange"
-                                              onClick={() => setIsOpen(false)}
-                                              className="font-semibold flex-1 ml-5"
-                                          >
-                                              {item.name}
-                                          </Link>
-
-                                          <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 20 20">
-
-                                          </svg>
-                                      </summary>
-
-                                      <div className="pl-4 flex flex-col">
-                                          {item.submenu.map((sub, j) => (
-                                              <NavItem
-                                                  key={j}
-                                                  title={sub.name}
-                                                  link={sub.href}
-                                                  active={router.pathname === sub.href}
-                                                  onClick={() => setIsOpen(false)}
-                                              />
-                                          ))}
-                                      </div>
-                                  </details>
-                              ) : (
-                                  <NavItem
-                                      key={i}
-                                      title={item.name}
-                                      link={item.href}
-                                      active={router.pathname === item.href}
-                                      onClick={() => setIsOpen(false)}
-                                  />
-                              )
-                          )}
-                      </div>
-                  </details>
-
-                  {/* ------------------- EXPERTISE ------------------- */}
-                  <div onClick={() => setIsOpen(false)} className="py-2 border-b mb-1 pl-4 cursor-pointer">
-                      <Link href="/capabilities/Expertise">
-                          <p className="text-base font-semibold">
-                              Expertise
-                          </p>
-                      </Link>
-                  </div>
-
-                  {/* ------------------- MANAGED SERVICES ------------------- */}
-                  <details className="w-full cursor-pointer pt-2">
-                      <summary className="w-full flex justify-between pb-1 border-b mb-1">
-                          <p className="pl-4">Managed Services</p>
-                      </summary>
-                      <div className="pl-4">
-                          {ms.map((item, i) => (
-                              <NavItem
-                                  key={i}
-                                  title={item.name}
-                                  link={item.href}
-                                  onClick={() => setIsOpen(false)}
-                                  active={router.pathname === item.href}
-                              />
-                          ))}
-                      </div>
-                  </details>
-
-                  {/* ------------------- INSIGHTS ------------------- */}
-                  <div onClick={() => setIsOpen(false)} className="py-2 border-b mb-1 pl-4 cursor-pointer">
-                      <Link href="/Insights">
-                          <p className="text-base font-semibold">
-                              Insights
-                          </p>
-                      </Link>
-                  </div>
-
-                  {/* ------------------- ABOUT ------------------- */}
-                  <details className="w-full cursor-pointer pt-2">
-                      <summary className="w-full flex justify-between pb-1 border-b mb-1">
-                          <p className="pl-4">About</p>
-                      </summary>
-                      <div className="pl-4">
-                          <NavItem title="About" link="/about" onClick={() => setIsOpen(false)} active={router.pathname === "/about"} />
-                          <NavItem title="Careers" link="/careers" onClick={() => setIsOpen(false)} active={router.pathname === "/careers"} />
-                          <NavItem title="Utilities Analytics User Group" link="/uaug" onClick={() => setIsOpen(false)} active={router.pathname === "/uaug"} />
-                      </div>
-                  </details>
-
-                  {/* ------------------- CONTACT US ------------------- */}
-                  <div className="pt-3 pl-4 pb-2 text-base">
-                      <Link href="https://info.hexstream.com/contact" onClick={() => setIsOpen(false)}>
-                          Contact Us
-                      </Link>
-                  </div>
-
-              </div>
-          </ul>
-
-      </nav>
-    </header>
+          {/* Mobile menu */}
+          <AnimatePresence>
+            {mobileOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -12, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -12, scale: 0.98 }}
+                transition={{ duration: 0.3, ease: EASE }}
+                className="mt-2 max-h-[calc(100svh-6.5rem)] origin-top overflow-y-auto relative isolate rounded-3xl bg-white px-6 pb-6 pt-2 shadow-lift ring-1 ring-ink/10 lg:hidden"
+              >
+                <HexPattern
+                  scale={1.1}
+                  className="-z-10 text-brand/[0.12] [mask-image:linear-gradient(to_top,black,transparent_55%)]"
+                />
+                {mainNav.map((entry) =>
+                  entry.kind === "group" ? (
+                    <MobileGroup key={entry.group.label} group={entry.group} />
+                  ) : (
+                    <Link
+                      key={entry.label}
+                      href={entry.href}
+                      className="block border-b border-ink/10 py-4 font-display text-lg font-semibold text-ink"
+                    >
+                      {entry.label}
+                    </Link>
+                  ),
+                )}
+                <ButtonLink href={CONTACT_URL} className="mt-6 w-full">
+                  Contact Us
+                </ButtonLink>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </header>
+    </>
   );
 }

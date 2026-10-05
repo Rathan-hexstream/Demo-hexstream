@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import SectionHeading from "../ui/SectionHeading";
+import { Reveal } from "../ui/motion";
 
 // software partners
 import I from "@/public/assets/partners/oracle_partner.png";
@@ -30,75 +32,59 @@ const softwarePartners = [
     { img: I12, alt: "Tableau Logo", name: "Tableau", large: true },
 ];
 
+const HexTile = ({ partner }: { partner: (typeof softwarePartners)[number] }) => (
+  <div className="group/hex w-full drop-shadow-[0_10px_16px_rgba(12,31,102,0.14)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:z-10 hover:-translate-y-2 hover:scale-110 hover:drop-shadow-[0_18px_26px_rgba(235,44,46,0.3)] lg:w-[9.5rem]">
+    <div className="hex-pointy bg-ink/10 p-px transition-colors duration-300 group-hover/hex:bg-brand">
+      <div className="hex-pointy relative bg-white">
+        <Image
+          src={partner.img}
+          alt={partner.alt}
+          fill
+          sizes="160px"
+          className={`object-contain ${partner.large ? "p-[14%]" : "p-[22%]"}`}
+        />
+      </div>
+    </div>
+  </div>
+);
+
 const Partners = () => {
-    return (
-        <div className="text-primary py-16 bg-gray-50" id="partners">
-            <div className="text-center max-w-4xl mx-auto w-11/12">
-                <h2 className="md:text-4xl text-2xl pb-6 font-bold">
-                    Our Technology Partners
-                </h2>
+  const half = Math.ceil(softwarePartners.length / 2);
+  const rows = [softwarePartners.slice(0, half), softwarePartners.slice(half)];
 
-                <p className="text-gray-600 leading-relaxed">
-                    HEXstream has strategic partnerships with industry-leading
-                    technology firms and specialized partners who share our vision
-                    for delivering excellence and long-term value.
-                </p>
-            </div>
+  return (
+    <section className="bg-white py-20 sm:py-28" id="partners">
+      <div className="container-x">
+        <SectionHeading
+          align="center"
+          eyebrow="Partners"
+          title="Our Technology Partners"
+          description="HEXstream has strategic partnerships with industry-leading technology firms and specialized partners who share our vision for delivering excellence and long-term value."
+        />
 
-            {/* Full-width modern grid */}
-            <div className="w-full mx-auto pt-14">
-                {/*<h3 className="text-2xl font-semibold text-center mb-10">*/}
-                {/*    Technology Partners*/}
-                {/*</h3>*/}
-
-                <div
-                    className="
-            grid
-            grid-cols-2
-            sm:grid-cols-3
-            md:grid-cols-4
-            lg:grid-cols-6
-            gap-8
-            px-6
-            md:px-16
-          "
-                >
-                    {softwarePartners.map((partner) => (
-                        <div
-                            key={partner.alt}
-                            className="
-                bg-white
-                p-6
-                rounded-xl
-                shadow-sm
-                hover:shadow-xl
-                transition-all
-                duration-300
-                flex
-                items-center
-                justify-center
-                h-32
-              "
-                        >
-                            <Image
-                                src={partner.img}
-                                alt={partner.alt}
-                                height={partner.large ? 150 : 100}
-                                width={partner.large ? 150 : 100}
-                                className={`
-                  object-contain 
-                  w-full h-full 
-                  transition-transform duration-300 
-                  hover:scale-105
-                  ${partner.large ? "scale-110" : ""}
-                `}
-                            />
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    );
+        {/* Honeycomb on desktop: the second row tucks into the gaps of the first */}
+        <Reveal delay={0.1} className="mt-14">
+          <div className="hidden flex-col items-center lg:flex">
+            {rows.map((row, i) => (
+              <div
+                key={i}
+                className={`flex gap-3 ${i === 1 ? "-mt-[2.1rem] translate-x-[2.5625rem]" : "-translate-x-[2.5625rem]"}`}
+              >
+                {row.map((partner) => (
+                  <HexTile key={partner.alt} partner={partner} />
+                ))}
+              </div>
+            ))}
+          </div>
+          <div className="mx-auto grid max-w-xl grid-cols-3 gap-3 sm:grid-cols-4 lg:hidden">
+            {softwarePartners.map((partner) => (
+              <HexTile key={partner.alt} partner={partner} />
+            ))}
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
 };
 
 export default Partners;

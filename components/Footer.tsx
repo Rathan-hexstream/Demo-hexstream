@@ -1,170 +1,153 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import logo3 from "../public/assets/bigHeaderLogo.png";
+import logo from "../public/assets/bigHeaderLogo.png";
 import mbe from "../public/assets/mbe_ori.png";
+import { ArrowIcon } from "./ui/Button";
+import { Reveal } from "./ui/motion";
+import {
+  CONTACT_URL,
+  insightLinks,
+  isExternal,
+  oracle,
+  products,
+  type NavLink,
+} from "@/utils/navigation";
 
-const navigation = [
-    { name: "Success Stories", href: "/Insights?type=Success Stories" },
-    { name: "Tech Corner", href: "/Insights?type=Tech Corner" },
-    { name: "Blogs", href: "/Insights?type=HEXstream Blog" },
-    {
-        name: "Whitepapers & Special Reports",
-        href: `/Insights?type=${encodeURIComponent("Whitepapers & Special Reports")}`,
-    },
-    { name: "UAUG", href: "/uaug" },
-    { name: "About Us", href: "/about" },
-    { name: "Careers", href: "/careers" },
-    { name: "Contact Us", href: "https://forms.office.com/r/zg0U7ZmsdF" },
+const company: NavLink[] = [
+  { name: "About Us", href: "/about" },
+  { name: "Careers", href: "/careers" },
+  { name: "Expertise", href: "/capabilities/Expertise" },
+  { name: "UAUG", href: "/uaug" },
+  { name: "Contact Us", href: CONTACT_URL },
+];
+
+const columns: { title: string; links: NavLink[] }[] = [
+  { title: "Products", links: products.links },
+  { title: "Oracle", links: oracle.links },
+  { title: "Insights", links: insightLinks },
+  { title: "Company", links: company },
 ];
 
 const socials = [
-    {
-        name: "Twitter",
-        href: "https://twitter.com/HEXstreamHQ",
-        icon: (props: any) => (
-            <svg
-                fill="#071757"
-                xmlns="http://www.w3.org/2000/svg"
-                height="1em"
-                viewBox="0 0 448 512"
-                {...props}
-            >
-                <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm297.1 84L257.3 234.6 379.4 396H283.8L209 298.1 123.3 396H75.8l111-126.9L69.7 116h98l67.7 89.5L313.6 116h47.5zM323.3 367.6L153.4 142.9H125.1L296.9 367.6h26.3z" />
-            </svg>
-        ),
-    },
-    {
-        name: "LinkedIn",
-        href: "https://www.linkedin.com/company/advanced-analytics-llc/",
-        icon: (props: any) => (
-            <svg
-                fill="#071757"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 448 512"
-                {...props}
-            >
-                <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path>
-            </svg>
-        ),
-    },
+  {
+    name: "X (Twitter)",
+    href: "https://twitter.com/HEXstreamHQ",
+    path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://www.linkedin.com/company/advanced-analytics-llc/",
+    path: "M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z",
+  },
 ];
 
+const linkClass =
+  "link-slide inline-block pb-0.5 text-[15px] text-white/70 hover:text-white";
+
 const Footer = () => {
-    return (
-        <footer className="bg-prime text-primary pt-12 pb-6">
-            {/* Main Section */}
-            <div className="container mx-auto px-6 lg:px-20 grid md:grid-cols-2 gap-10">
-                {/* Left Section */}
-                <div className="space-y-6">
-                    <Link href="/">
-                        <Image
-                            priority
-                            alt="Hexstream Logo"
-                            className="hover:scale-95 transition-transform duration-200"
-                            height={120}
-                            width={120}
-                            src={logo3}
-                        />
-                    </Link>
+  return (
+    <footer className="bg-ink-800 text-white">
+      <div className="h-1 bg-gradient-to-r from-brand via-brand-400 to-brand" />
 
-                    {/* Socials */}
-                    <div>
-                        <div className="flex gap-4 items-center">
-                            {socials.map((soc) => (
-                                <Link
-                                    key={soc.name}
-                                    href={soc.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hover:opacity-80"
-                                >
-                                    <soc.icon className="h-5 w-5 hover:fill-secondary transition-colors" />
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
+      <Reveal className="container-x">
+        <div className="grid gap-14 py-16 lg:grid-cols-12 lg:gap-10 lg:py-20">
+          {/* Contact: the one loud element in the footer */}
+          <div className="lg:col-span-6">
+            <Link
+              href="/"
+              aria-label="HEXstream home"
+              className="inline-block rounded-xl bg-white px-3.5 py-2 transition-transform duration-300 hover:scale-105"
+            >
+              <Image src={logo} alt="HEXstream" width={118} height={49} />
+            </Link>
+            <p className="mt-10 text-sm font-medium uppercase tracking-[0.18em] text-white/50">
+              Let&apos;s talk data
+            </p>
+            <Link
+              href="mailto:info@hexstream.com"
+              className="group/mail mt-3 inline-flex items-center gap-3 font-display text-xl font-semibold tracking-tight transition-colors duration-300 hover:text-brand-400 sm:text-3xl"
+            >
+              <span className="link-slide pb-1">info@hexstream.com</span>
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand text-white transition-transform duration-500 group-hover/mail:rotate-[-45deg] group-hover/mail:scale-110">
+                <ArrowIcon />
+              </span>
+            </Link>
+            <Link
+              href="https://maps.app.goo.gl/QchjhcLp6qoQ9o9YA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 block w-fit text-[15px] leading-relaxed text-white/60 transition-colors duration-300 hover:text-white"
+            >
+              311 S Wacker Drive, Suite 6550
+              <br />
+              Chicago, IL 60606
+            </Link>
+          </div>
 
-                    {/* Address */}
-                    <div className="flex gap-3 items-start">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="17"
-                            height="17"
-                            viewBox="0 0 16.879 16.879"
-                        >
-                            <path
-                                d="M14.654.116.948,6.442A1.6,1.6,0,0,0,1.58,9.5h5.8v5.8a1.6,1.6,0,0,0,3.058.633L16.763,2.225A1.645,1.645,0,0,0,14.654.116Z"
-                                fill="#071757"
-                            />
-                        </svg>
-                        <Link
-                            href="https://maps.app.goo.gl/QchjhcLp6qoQ9o9YA"
-                            target="_blank"
-                            className="hover:text-secondary transition-all"
-                        >
-                            HQ: 311 S Wacker Drive, Suite 6550 Chicago, IL 60606
-                        </Link>
-                    </div>
+          {/* Links */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:col-span-6">
+            {columns.map((col) => (
+              <div key={col.title}>
+                <h3 className="text-sm font-semibold text-white">{col.title}</h3>
+                <ul className="mt-5 space-y-3">
+                  {col.links.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        {...(isExternal(link.href)
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                        className={linkClass}
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
 
-                    {/* Email */}
-                    <div className="flex gap-3 items-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="1em"
-                            viewBox="0 0 512 512"
-                            fill="#071757"
-                            className="h-5 w-5"
-                        >
-                            <path d="M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4L236.8 313.6c11.4 8.5 27 8.5 38.4 0L492.8 150.4c12.1-9.1 19.2-23.3 19.2-38.4c0-26.5-21.5-48-48-48H48zM0 176V384c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V176L294.4 339.2c-22.8 17.1-54 17.1-76.8 0L0 176z" />
-                        </svg>
-                        <Link
-                            href="mailto:info@hexstream.com"
-                            className="hover:text-secondary transition-all"
-                        >
-                            info@hexstream.com
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Right Section */}
-                <div className="space-y-4 md:pl-10">
-                    <h3 className="font-semibold text-xl border-b border-primary/40 pb-2 inline-block">
-                        Quick Links
-                    </h3>
-                    <ul className="grid grid-cols-2 gap-y-2">
-                        {navigation.map((navItem) => (
-                            <li key={navItem.name}>
-                                <Link
-                                    href={navItem.href}
-                                    className="hover:text-secondary transition-colors"
-                                >
-                                    {navItem.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-[1.5px] bg-primary w-11/12 mx-auto my-8 opacity-70" />
-
-            {/* Bottom Section */}
-            <div className="container mx-auto px-6 lg:px-20 flex items-center justify-between">
-                <Image
-                    priority
-                    height={60}
-                    width={60}
-                    alt="MBE Certified"
-                    src={mbe}
-                />
-                <div className="text-lg tracking-wide">
-                    © {new Date().getFullYear()} HEXstream Inc. All Rights Reserved.
-                </div>
-            </div>
-        </footer>
-    );
+        {/* Bottom bar */}
+        <div className="flex flex-col items-center justify-between gap-5 border-t border-white/10 py-6 sm:flex-row">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-lg bg-white p-0.5">
+              <Image src={mbe} alt="MBE Certified" width={38} height={38} />
+            </span>
+            <p className="text-xs text-white/50">
+              © {new Date().getFullYear()} HEXstream Inc. All Rights Reserved.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {socials.map((soc) => (
+              <Link
+                key={soc.name}
+                href={soc.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={soc.name}
+                className="grid h-10 w-10 place-items-center rounded-full text-white/60 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:text-white"
+              >
+                <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+                  <path d={soc.path} />
+                </svg>
+              </Link>
+            ))}
+            <button
+              type="button"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="group/top ml-2 inline-flex items-center gap-2 rounded-full border border-white/20 py-2 pl-4 pr-3 text-xs font-medium text-white/80 transition-colors duration-300 hover:border-white hover:bg-white hover:text-ink"
+            >
+              Back to top
+              <ArrowIcon className="-rotate-90 transition-transform duration-300 group-hover/top:-translate-y-0.5" />
+            </button>
+          </div>
+        </div>
+      </Reveal>
+    </footer>
+  );
 };
 
 export default Footer;

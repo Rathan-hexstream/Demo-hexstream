@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 import contactImg from "../public/assets/contact.jpg";
 import Head from "next/head";
 import Loader from "@/components/reusable/Loader";
 
-const variants = {
+const variants: Variants = {
   fadeIn: {
     x: 100,
     opacity: 0,

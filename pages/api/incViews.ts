@@ -3,11 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import client from "@/utils/apolloClient";
 import { gql, useMutation } from "@apollo/client";
 
-const redis = new Redis({
-  url: "https://known-chow-38034.upstash.io",
-  token:
-    "AZSSACQgMTBiMjYyZGEtMzg4ZS00OWI5LTk3NjYtYzUwMDA1YzAxZmRmNGYxNWY3MjJhYjhlNDA4YjlkODMxNTcyMTE0ZWRmZWY=",
-});
+// Reads UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN from the environment.
+const redis = Redis.fromEnv();
 
 const INCR_VIEWS_MUTATION = gql`
   mutation incViews($blogId: String!, $count: Int!) {

@@ -2,99 +2,58 @@ import Layout from "@/components/Layout";
 import "@/styles/globals.scss";
 import "@/styles/hexaid.scss";
 import type { AppProps } from "next/app";
-import { DM_Sans } from "next/font/google";
-import { useEffect, useState } from "react";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 NProgress.configure({ showSpinner: false });
-import Router, { useRouter } from "next/router";
-import Loader from "@/components/reusable/Loader";
+import { useRouter } from "next/router";
 import Head from "next/head";
-import { AnimatePresence, motion } from "framer-motion";
-import Link from "next/link";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import Script from "next/script";
+import { EASE } from "@/components/ui/motion";
 
-const font = DM_Sans({
+const body = Inter({
   subsets: ["latin"],
-  weight: ["400", "700"],
   display: "swap",
+  variable: "--font-body",
 });
 
-const variants = {
-  fadeIn: {
-    y: 100,
-    opacity: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeInOut",
-    },
-  },
-  inactive: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeInOut",
-    },
-  },
-  fadeOut: {
-    opacity: 0,
-    y: -100,
-    transition: {
-      duration: 0.6,
-      ease: "easeInOut",
-    },
-  },
-};
+const display = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-display",
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [loading, setloading] = useState(false);
 
+  // AOS still drives the pages that have not moved to Framer Motion yet.
   useEffect(() => {
     Aos.init({});
-    document.addEventListener(
-      "scroll",
-      (e) => {
-        Aos.refresh();
-      },
-      { capture: true, passive: true }
-    );
-    return () =>
-      document.removeEventListener("scroll", (e) => {
-        Aos.refresh();
-      });
+    const refresh = () => Aos.refresh();
+    document.addEventListener("scroll", refresh, { capture: true, passive: true });
+    return () => document.removeEventListener("scroll", refresh, { capture: true });
   }, []);
-
-  Router.events.on("routeChangeStart", (url) => {
-    setloading(true);
-    NProgress.start();
-  });
-
-  Router.events.on("routeChangeComplete", (url) => {
-    setloading(false);
-    NProgress.done();
-  });
 
   useEffect(() => {
-    Aos.init({});
-    document.addEventListener(
-      "scroll",
-      (e) => {
-        Aos.refresh();
-      },
-      { capture: true, passive: true }
-    );
-    return () =>
-      document.removeEventListener("scroll", (e) => {
-        Aos.refresh();
-      });
-  }, []);
+    const start = () => NProgress.start();
+    const done = () => NProgress.done();
+    router.events.on("routeChangeStart", start);
+    router.events.on("routeChangeComplete", done);
+    router.events.on("routeChangeError", done);
+    return () => {
+      router.events.off("routeChangeStart", start);
+      router.events.off("routeChangeComplete", done);
+      router.events.off("routeChangeError", done);
+    };
+  }, [router.events]);
 
   return (
-    <div className={font.className}>
+    <div className={`${body.variable} ${display.variable} font-sans`}>
       <Head>
         <title>
           {"HEXstream–The global leader in data integration and analytics for the utility industry."}
@@ -157,20 +116,21 @@ export default function App({ Component, pageProps }: AppProps) {
           gtag('config', 'G-FSTKK4GE2L');`}
       </Script>
 
-      <Layout>
-        <AnimatePresence initial={false} mode="wait">
-          <motion.div
-            key={router.asPath}
-            variants={variants}
-            initial="fadeIn"
-            animate="inactive"
-            exit="fadeOut"
-          >
-            {/* {loading && <Loader />} */}
-            <Component {...pageProps} />
-          </motion.div>
-        </AnimatePresence>
-      </Layout>
+      <MotionConfig reducedMotion="user">
+        <Layout>
+          <AnimatePresence initial={false} mode="wait">
+            <motion.div
+              key={router.asPath.split("?")[0]}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: EASE }}
+            >
+              <Component {...pageProps} />
+            </motion.div>
+          </AnimatePresence>
+        </Layout>
+      </MotionConfig>
     </div>
   );
 }

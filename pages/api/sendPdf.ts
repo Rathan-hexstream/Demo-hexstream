@@ -83,3 +83,11 @@
 //   res.status(200);
 //   res.send({ message: "" });
 // }
+
+// The original handler above is disabled. Next.js requires every file under
+// pages/api to export a handler, so respond with 404 until it is restored.
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default function handler(_req: NextApiRequest, res: NextApiResponse) {
+  res.status(404).end();
+}

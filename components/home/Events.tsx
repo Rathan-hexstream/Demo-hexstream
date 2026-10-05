@@ -1,95 +1,55 @@
 import React from "react";
 import Image from "next/image";
-import I from "../public/assets/Screen-Shot-2021-02-11-at-1.37.15-AM-1024x818.png";
-import Link from "next/link";
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import ButtonLink from "../ui/Button";
+import { Reveal } from "../ui/motion";
 
 const Events = ({ data }: any) => {
-  return (
-    <div className="py-8  relative">
-      <div className="absolute w-30  md:h-16 -top-7 md:-top-8 left-0 bg-primary px-6 md:px-16 md:py-4 py-3 text-prime text-base md:text-2xl font-bold">
-        Upcoming Event
-      </div>
-      <div className="absolute bg-prime -z-10 lg:w-9/12 w-full h-full -mt-8"></div>
-      <div className="grid lg:grid-cols-12 grid-cols-1 place-items-center max-w-7xl mx-auto w-11/12 gap-6 pt-4">
-        <div className="lg:col-span-4 col-span-1 text-primary md:order-none order-2">
-          <p>{data[0]?.eventDate}</p>
-          <h2 className="md:text-3xl text-xl font-bold py-2">
-            {data[0]?.eventName}
-          </h2>
-          <div className="flex gap-1 justify-start items-center">
-            <span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                />
-              </svg>
-            </span>
-            <p className="font-bold">
-              <span>{data[0].eventLocation}</span>
-            </p>
-          </div>
+  const event = data[0];
+  const isVideo =
+    event.eventBanner?.mimeType == "video/mp4" || event.eventBanner?.mimeType == "video/webm";
 
-          <p className="pt-4">{data[0].eventDetails}</p>
-          <div className="pt-4">
-            <div className="flex gap-2 justify-center items-center hover:cursor-pointer w-fit border-2 border-primary hover:border-white hover:text-white text-lg  px-2 md:px-4 py-1 transition-colors duration-300 relative group/item">
-              <div className="absolute w-full h-full -z-10 group-hover/item:bg-secondary translate-x-0 translate-y-0 group-hover/item:translate-x-1 group-hover/item:translate-y-1 transition-all transform duration-500"></div>
-              <Link href={"/uaug"} className="text-sm md:text-lg">
-                Learn More
-              </Link>
-              <span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-3 h-3 "
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                  />
-                </svg>
-              </span>
-            </div>
+  return (
+    <section className="bg-white pb-20 sm:pb-28">
+      <Reveal className="container-x">
+        <div className="grid overflow-hidden rounded-3xl bg-mist ring-1 ring-ink/5 lg:grid-cols-12">
+          <div className="order-2 flex flex-col justify-center p-8 sm:p-12 lg:order-1 lg:col-span-5">
+            <p className="inline-flex w-fit items-center gap-2 rounded-full bg-brand px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white">
+              Upcoming event
+            </p>
+            <p className="mt-6 text-sm font-medium text-ink/60">{event?.eventDate}</p>
+            <h2 className="mt-2 font-display text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
+              {event?.eventName}
+            </h2>
+            <p className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-ink">
+              <MapPinIcon className="h-5 w-5 text-brand" />
+              {event.eventLocation}
+            </p>
+            <p className="mt-5 leading-relaxed text-ink/65">{event.eventDetails}</p>
+            <ButtonLink href="/uaug" className="mt-8 w-fit">
+              Learn more
+            </ButtonLink>
+          </div>
+          <div className="relative order-1 min-h-[260px] lg:order-2 lg:col-span-7">
+            {isVideo ? (
+              <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover">
+                <source src={event.eventBanner.url} type={event.eventBanner.mimeType} />
+              </video>
+            ) : (
+              event.eventBanner?.url && (
+                <Image
+                  src={event.eventBanner.url}
+                  alt={event?.eventName + " image"}
+                  fill
+                  sizes="(min-width: 1024px) 58vw, 100vw"
+                  className="object-cover"
+                />
+              )
+            )}
           </div>
         </div>
-        <div className="lg:col-span-8 col-span-1 pt-8 -order-1 md:order-1">
-          {data[0].eventBanner.mimeType == "video/mp4" ||
-          data[0].eventBanner.mimeType == "video/webm" ? (
-            <video autoPlay loop muted>
-              <source
-                src={data[0].eventBanner.url}
-                type="video/mp4"
-                className="object-cover"
-              />
-            </video>
-          ) : (
-            <Image
-              src={data[0].eventBanner.url}
-              width={1200}
-              height={800}
-              alt={data[0]?.eventName + "image"}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+      </Reveal>
+    </section>
   );
 };
 
