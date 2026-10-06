@@ -23,7 +23,7 @@ const teams = [
     designation: "CTO",
     linkedIn: "https://www.linkedin.com/in/karthikmada/",
     description:
-        "Karthik Mada has been in the data analytics and integration space for more than two decades, working with major utilities in North America to design and implement  numerous analytics solutions related to outage management and grid reliability. Karthik is a trusted advisor to many large utilities, and frequently collaborates with the Oracle product-development team on utility-analytics solutions. Karthik holds a bachelor’s degree in Industrial Engineering & Management.",
+        "Karthik Mada has been in the data analytics and integration space for more than two decades, working with major utilities in North America to design and implement  numerous analytics solutions related to outage management and grid reliability. Karthik is a trusted advisor to many large utilities, and frequently collaborates with the Oracle product-development team on utility-analytics solutions. Karthik holds a bachelor’s degree in industrial engineering & management and a master’s in business administration.",
   },
   {
     name: "Arun Kota",
