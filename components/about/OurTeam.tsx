@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Jamal from "@/public/assets/Jamal_2.jpg";
-import Andreas from "@/public/assets/friday.jpg";
-import Kartik from "@/public/assets/Karthik_Photo.jpg";
+import Kartik from "@/public/assets/Karthik_Mada.jpg";
 import Arun from "@/public/assets/Arun_Photo.jpg";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,22 +20,10 @@ const teams = [
   {
     name: "Karthik Mada",
     img: Kartik,
-    designation: "Senior Vice President",
+    designation: "CTO",
     linkedIn: "https://www.linkedin.com/in/karthikmada/",
     description:
-        "Karthik Mada has been in the data analytics and integration space for more than two decades, working with major utilities in North America to design and implement  numerous analytics solutions related to outage management and grid reliability. Karthik is a trusted advisor to many large utilities, and frequently collaborates with the Oracle product-development team on utility-analytics solutions. Karthik holds a bachelor’s degree in computer science and a master’s in business administration.",
-  },
-  {
-    name: "Bob Doyle",
-    img: Andreas,
-    designation: "Chief Revenue Officer",
-    linkedIn: "https://www.linkedin.com/in/bobdoyle0321/",
-    description:
-        "Bob Doyle's career spans a diverse range of demanding roles. Before his tenure in software and learning the intricacies of the tech industry, he served as a lineman apprentice, a US Marine, and a career firefighter, where he rose to the rank of deputy fire chief.\n" +
-        "\n" +
-        "In the tech realm, he has held pivotal roles at Kinaxis, SAP, Qubole and Exasol, most recently serving as the head of global sales at Algo, where he led high-performance sales teams to significant revenue growth. \n" +
-        "\n" +
-        "Bob's strategic approach integrates deep market insight with a focus on aligning sales strategies to the company’s growth objectives, all while fostering robust partnerships across all teams. Drawing on his unique blend of leadership and adaptability gained through service as a US Marine, firefighter, and tech executive, he is dedicated to placing customer needs at the heart of HEXstream's operations, ensuring that every  decision we make enhances value and satisfaction for those we serve.",
+        "Karthik Mada has been in the data analytics and integration space for more than two decades, working with major utilities in North America to design and implement  numerous analytics solutions related to outage management and grid reliability. Karthik is a trusted advisor to many large utilities, and frequently collaborates with the Oracle product-development team on utility-analytics solutions. Karthik holds a bachelor’s degree in Industrial Engineering & Management.",
   },
   {
     name: "Arun Kota",
@@ -136,7 +123,7 @@ const OurTeam = () => {
             </div>
 
             {/* Selector */}
-            <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:mt-auto lg:pt-10">
+            <div className="mt-10 grid grid-cols-3 gap-3 lg:mt-auto lg:pt-10">
               {teams.map((team, i) => {
                 const selected = i === active;
                 return (
